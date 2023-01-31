@@ -1,0 +1,6 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+Data-QuantTrading.csv
+package_tester.ipynb
+tabula.ipynb
