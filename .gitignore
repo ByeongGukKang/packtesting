@@ -1,6 +1,18 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.pyc
+*.log
 Data-QuantTrading.csv
 package_tester.ipynb
 tabula.ipynb
+
+script_tabula.ipynb
+
+kis_tabula.ipynb
+kis_setting.json
+kis_trade_id.json
+kis_urls.json
+kis_names.json
+
+krx_setting.json
+krx_urls.json

@@ -125,7 +125,7 @@ class Packtesting:
     @staticmethod
     def execution(*args):
         return bid_ask_auto_defer(*args)
-
+    
     ### Backtesting Engine ###
     def run(
         self,
@@ -155,10 +155,7 @@ class Packtesting:
 
             packet = self.create_packet(time) # 뒤에 보내줄 데이터 패킷 생성
 
-            if self.create_continue(packet): # Signal 연산 skip 조건
-                signal = zero_order.copy()
-            else:
-                signal = self.create_signal(packet) # 다음 Signal 생성
+            signal = self.create_signal(packet) # 다음 Signal 생성
 
         print("Done")
 
