@@ -1,15 +1,17 @@
 
 import requests
 import json
+import time
 
 import pandas as pd
 
-from dataline.tools import raise_arg
+from .tools import raise_arg
 
 class KRX_CRAWL:
 
     def __init__(self):
         self.__base_url = "http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd"
+        self.sleep_time = 0.75
 
     def __clear_headers(self):
         self.__headers = {
@@ -18,6 +20,7 @@ class KRX_CRAWL:
             'Accept-Language': 'ko-KR,ko;q=0.9',
             'Connection': 'keep-alive',
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            "Cookie": "",
             'Host': 'data.krx.co.kr',
             'Origin': 'http://data.krx.co.kr',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36',
@@ -29,6 +32,7 @@ class KRX_CRAWL:
         self.__params = {}
 
     def __return_part(self):
+        time.sleep(self.sleep_time)
         res = requests.get(url=self.__base_url, headers=self.__headers, params=self.__params)
         res.raise_for_status()
 

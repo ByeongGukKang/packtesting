@@ -6,7 +6,7 @@ import time
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 
-from dataline.tools import DateManager, raise_arg
+from .tools import DateManager, raise_arg
 
 class KIS:
 
