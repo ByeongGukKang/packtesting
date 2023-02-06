@@ -52,14 +52,14 @@ class KRX_CRAWL:
             "urderlying", 
             underlying, 
             ["코스피200F","미니코스피200F","코스피200O","코스피200위클리O","미니코스피200O","코스닥150F","코스닥150O","KRX300F","변동성지수F","섹터지수F",
-            "3년국채F","5년국채F","10년국채F","3개월무위험금리F","미국달러F","달러플렉스F","엔F","유로F","위안F","금F"
+            "3년국채F","5년국채F","10년국채F","3개월무위험금리F","미국달러F","달러플렉스F","엔F","유로F","위안F","금F",
             "주식F","주식O","유로스톡스50F"]
         )
         prodId_dict = {"코스피200F":"KRDRVFUK2I", "미니코스피200F":"KRDRVFUMKI","코스피200O":"KRDRVOPK2I","코스피200위클리O":"KRDRVFUMKI","미니코스피200O":"KRDRVOPMKI",
             "코스닥150F":"KRDRVFUKQI","코스닥150O":"KRDRVOPKQI","KRX300F":"KRDRVFUXI3","변동성지수F":"KRDRVFUVKI","섹터지수F":"KRDRVFUXAT",
             "3년국채F":"KRDRVFUBM3","5년국채F":"KRDRVFUBM5","10년국채F":"KRDRVFUBMA","3개월무위험금리F":"KRDRVFURFR","미국달러F":"KRDRVFUUSD","달러플렉스F":"KRDRVFXUSD",
             "엔F":"KRDRVFUJPY","유로F":"KRDRVFUEUR","위안F":"KRDRVFUCNH","금F":"KRDRVFUKGD",
-            "주식F":"KRDRVFUKGD","주식O":"KRDRVOPEQU","유로스톡스50F":"KRDRVFUEST"
+            "주식F":"KRDRVFUEQU","주식O":"KRDRVOPEQU","유로스톡스50F":"KRDRVFUEST"
         }
         self.__params["prodId"] = prodId_dict[underlying]
         self.__params["trdDdBox1"] = date
@@ -83,16 +83,20 @@ class KRX_CRAWL:
             "urderlying", 
             underlying, 
             ["코스피200F","미니코스피200F","코스닥150F","KRX300F","변동성지수F","섹터지수F",
-            "3년국채F","5년국채F","10년국채F","3개월무위험금리F","미국달러F","달러플렉스F","엔F","유로F","위안F","금F"
+            "3년국채F","5년국채F","10년국채F","3개월무위험금리F","미국달러F","달러플렉스F","엔F","유로F","위안F","금F",
             "주식F","유로스톡스50F"]
         )
         prodId_dict = {"코스피200F":"KRDRVFUK2I", "미니코스피200F":"KRDRVFUMKI",
             "코스닥150F":"KRDRVFUKQI","KRX300F":"KRDRVFUXI3","변동성지수F":"KRDRVFUVKI","섹터지수F":"KRDRVFUXAT",
             "3년국채F":"KRDRVFUBM3","5년국채F":"KRDRVFUBM5","10년국채F":"KRDRVFUBMA","3개월무위험금리F":"KRDRVFURFR","미국달러F":"KRDRVFUUSD","달러플렉스F":"KRDRVFXUSD",
             "엔F":"KRDRVFUJPY","유로F":"KRDRVFUEUR","위안F":"KRDRVFUCNH","금F":"KRDRVFUKGD",
-            "주식F":"KRDRVFUKGD","유로스톡스50F":"KRDRVFUEST"
+            "주식F":"KRDRVFUEQU","유로스톡스50F":"KRDRVFUEST"
         }
         self.__params["prodId"] = prodId_dict[underlying]
+        if underlying == "섹터지수F":
+            self.__params["subProdId"] = "KRDRVFUXAT"
+        elif underlying == "주식F":
+            self.__params["subProdId"] = "KRDRVFUEQU"
         self.__params["strtDd"] = start
         self.__params["endDd"] = end
         self.__params["mktTpCd"] = "T"
