@@ -31,23 +31,19 @@ class KRX_CRAWL:
     def __clear_params(self):
         self.__params = {}
 
-    def __return_part(self):
+    def __return_part(self, isShort=False):
         time.sleep(self.sleep_time)
         res = requests.get(url=self.__base_url, headers=self.__headers, params=self.__params)
         res.raise_for_status()
 
-        res = res.json()["output"]
+        if isShort:
+            res = res.json()["OutBlock_1"]
+        else:
+            res = res.json()["output"]
 
         return pd.DataFrame(res)
     
     def get_kr_derivatives_date_price(self, date, underlying="코스피200F"):
-        self.__clear_headers()
-        self.__headers["Referer"] = "http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201"
-
-        self.__clear_params()
-        self.__params["bld"] = "dbms/MDC/STAT/standard/MDCSTAT12501"
-        self.__params["locale"] = "ko_KR"
-        self.__params["trdDd"] = date
         raise_arg(
             "urderlying", 
             underlying, 
@@ -55,6 +51,15 @@ class KRX_CRAWL:
             "3년국채F","5년국채F","10년국채F","3개월무위험금리F","미국달러F","달러플렉스F","엔F","유로F","위안F","금F",
             "주식F","주식O","유로스톡스50F"]
         )
+
+        self.__clear_headers()
+        self.__headers["Referer"] = "http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201"
+
+        self.__clear_params()
+        self.__params["bld"] = "dbms/MDC/STAT/standard/MDCSTAT12501"
+        self.__params["locale"] = "ko_KR"
+        self.__params["trdDd"] = date
+
         prodId_dict = {"코스피200F":"KRDRVFUK2I", "미니코스피200F":"KRDRVFUMKI","코스피200O":"KRDRVOPK2I","코스피200위클리O":"KRDRVFUMKI","미니코스피200O":"KRDRVOPMKI",
             "코스닥150F":"KRDRVFUKQI","코스닥150O":"KRDRVOPKQI","KRX300F":"KRDRVFUXI3","변동성지수F":"KRDRVFUVKI","섹터지수F":"KRDRVFUXAT",
             "3년국채F":"KRDRVFUBM3","5년국채F":"KRDRVFUBM5","10년국채F":"KRDRVFUBMA","3개월무위험금리F":"KRDRVFURFR","미국달러F":"KRDRVFUUSD","달러플렉스F":"KRDRVFXUSD",
@@ -73,12 +78,6 @@ class KRX_CRAWL:
         return self.__return_part()
     
     def get_kr_futures_recent_price(self, start, end, underlying="코스피200F"):
-        self.__clear_headers()
-        self.__headers["Referer"] = "http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201"
-
-        self.__clear_params()
-        self.__params["bld"] = "dbms/MDC/STAT/standard/MDCSTAT12701"
-        self.__params["locale"] = "ko_KR"
         raise_arg(
             "urderlying", 
             underlying, 
@@ -86,6 +85,14 @@ class KRX_CRAWL:
             "3년국채F","5년국채F","10년국채F","3개월무위험금리F","미국달러F","달러플렉스F","엔F","유로F","위안F","금F",
             "주식F","유로스톡스50F"]
         )
+
+        self.__clear_headers()
+        self.__headers["Referer"] = "http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201"
+
+        self.__clear_params()
+        self.__params["bld"] = "dbms/MDC/STAT/standard/MDCSTAT12701"
+        self.__params["locale"] = "ko_KR"
+
         prodId_dict = {"코스피200F":"KRDRVFUK2I", "미니코스피200F":"KRDRVFUMKI",
             "코스닥150F":"KRDRVFUKQI","KRX300F":"KRDRVFUXI3","변동성지수F":"KRDRVFUVKI","섹터지수F":"KRDRVFUXAT",
             "3년국채F":"KRDRVFUBM3","5년국채F":"KRDRVFUBM5","10년국채F":"KRDRVFUBMA","3개월무위험금리F":"KRDRVFURFR","미국달러F":"KRDRVFUUSD","달러플렉스F":"KRDRVFXUSD",
@@ -107,17 +114,14 @@ class KRX_CRAWL:
         return self.__return_part()
     
     def get_kr_listed_date(self, date, index="코스피"):
+        raise_arg("index", index, ["코스피","코스닥","코스피200","코스닥150"])
+
         self.__clear_headers()
         self.__headers['Refer'] = "http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201"
 
         self.__clear_params()
         self.__params["bld"] = "dbms/MDC/STAT/standard/MDCSTAT00601"
         self.__params["locale"] = "ko_KR"
-        raise_arg(
-            "index", 
-            index, 
-            ["코스피","코스닥","코스피200","코스닥150"]
-        )
         self.__params["tboxindIdx_finder_equidx0_28"] = index
         indIdx_dict = {"코스피":"1","코스닥":"2","코스피200":"1","코스닥150":"2"}
         self.__params["indIdx"] = indIdx_dict[index]
@@ -130,6 +134,93 @@ class KRX_CRAWL:
         self.__params["csvxls_isNo"] = "false"
 
         return self.__return_part()
+    
+    def get_kr_short_traded(self, date, market="코스피"):
+        raise_arg("market", market, ["코스피","코스닥"])
+
+        self.__clear_headers()
+        self.__headers['Refer'] = "http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0204"
+
+        self.__clear_params()
+        self.__params["bld"] = "dbms/MDC/STAT/srt/MDCSTAT30101"
+        self.__params["locale"] = "ko_KR"
+        self.__params["searchType"] = "1"
+        if market == "코스피":
+            self.__params["mktId"] = "STK"
+            self.__params["secugrpId"] = "STMFRTSCIFDRFS","EF","EN","EW","SRSW","BC"
+            self.__params["inqCond"] = "STMFRTSCIFDRFSEFENEWSRSWBC"
+        else:
+            self.__params["mktId"] = "KSQ"
+            self.__params["secugrpId"] = "STMFRTSCIFDRFS","SRSW"
+            self.__params["inqCond"] = "STMFRTSCIFDRFSSRSW"
+        self.__params["trdDd"] = date
+        self.__params["tboxisuCd_finder_srtisu1_26"] = ""
+        self.__params["isuCd"] = ""
+        self.__params["isuCd2"] = ""
+        self.__params["codeNmisuCd_finder_srtisu1_26"] = ""
+        self.__params["param1isuCd_finder_srtisu1_26"] = ""
+        self.__params["strtDd"] = date
+        self.__params["endDd"] = date
+        self.__params["share"] = "1"
+        self.__params["money"] = "1"
+        self.__params["csvxls_isNo"] = "false"
+
+        return self.__return_part(isShort=True)
+    
+    def get_kr_short_remain(self, date, market="코스피"):
+        raise_arg("market", market, ["코스피","코스닥"])
+
+        self.__clear_headers()
+        self.__headers['Refer'] = "http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0204"
+
+        self.__clear_params()
+        self.__params["bld"] = "dbms/MDC/STAT/srt/MDCSTAT30501"
+        self.__params["locale"] = "ko_KR"
+        self.__params["searchType"] = "1"
+        if market == "코스피":
+            self.__params["mktTpCd"] = "1"
+        else:
+            self.__params["mktTpCd"] = "2"
+        self.__params["trdDd"] = date
+        self.__params["tboxisuCd_finder_srtisu0_4"] = "005930/삼성전자"
+        self.__params["isuCd"] = "KR7005930003"
+        self.__params["isuCd2"] = "KR7005930003"
+        self.__params["codeNmisuCd_finder_srtisu0_4"] = "삼성전자"
+        self.__params["param1isuCd_finder_srtisu0_4"] = ""
+        self.__params["strtDd"] = date
+        self.__params["endDd"] = date
+        self.__params["share"] = "1"
+        self.__params["money"] = "1"
+        self.__params["csvxls_isNo"] = "false"
+
+        return self.__return_part(isShort=True)
+    
+    def get_kr_short_holder(self, date, market="코스피"):
+        raise_arg("market", market, ["코스피","코스닥"])
+
+        self.__clear_headers()
+        self.__headers['Refer'] = "http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0204"
+
+        self.__clear_params()
+        self.__params["bld"] = "dbms/MDC/STAT/srt/MDCSTAT30701"
+        self.__params["locale"] = "ko_KR"
+        self.__params["searchType"] = "1"
+        if market == "코스피":
+            self.__params["mktTpCd"] = "1"
+        else:
+            self.__params["mktTpCd"] = "2"
+        self.__params["trdDd"] = date
+        self.__params["tboxisuCd_finder_srtisu0_5"] = "005930/삼성전자"
+        self.__params["isuCd"] = "KR7005930003"
+        self.__params["isuCd2"] = "KR7005930003"
+        self.__params["codeNmisuCd_finder_srtisu0_5"] = "삼성전자"
+        self.__params["param1isuCd_finder_srtisu0_5"] = ""
+        self.__params["strtDd"] = date
+        self.__params["endDd"] = date
+        self.__params["csvxls_isNo"] = "false"
+
+        return self.__return_part(isShort=True)
+
 
 class KRX_API:
 

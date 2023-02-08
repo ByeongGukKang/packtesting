@@ -2,6 +2,7 @@ import logging
 import time
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from typing import Iterable
 
 import pandas as pd
 
@@ -44,7 +45,7 @@ class DateManager:
     def str_to_datetime(data, format="%Y-%m-%d"):
         if type(data) == str:
             return datetime.strptime(data, format)
-        elif type(list(data)) == list:
+        elif isinstance(data, Iterable):
             tmp_list = []
             for val in list(data):
                 tmp_list.append(datetime.strptime(val))
@@ -54,7 +55,7 @@ class DateManager:
     def pd_to_datetime(data, format="%Y-%m-%d"):
         if type(data) == pd._libs.tslibs.timestamps.Timestamp:
             return datetime.strptime(data.strftime("%Y-%m-%d"), format)
-        elif type(list(data)) == list:
+        elif isinstance(data, Iterable):
             tmp_list = []
             for val in list(data):
                 tmp_list.append(val.strftime("%Y-%m-%d"))
@@ -64,11 +65,31 @@ class DateManager:
     def datetime_to_pd(data, format="%Y-%m-%d"):
         if type(data) == datetime:
             return pd.to_datetime(data.strftime(format))
-        elif type(list(data)) == list:
+        elif isinstance(data, Iterable):
             tmp_list = []
             for val in list(data):
                 tmp_list.append(val.strftime(format))
             return tmp_list
+
+    @staticmethod
+    def timestamp_to_datetime(data, format="%Y-%m-%d"):
+        if type(data) == int:
+            return datetime.fromtimestamp(int(data)).strftime(format) # %H:%M:%S
+        elif isinstance(data, Iterable):
+            tmp_list = []
+            for val in list(data):
+                tmp_list.append(datetime.fromtimestamp(int(val)).strftime(format))
+            return tmp_list
+    
+    @staticmethod
+    def str_to_timestamp(data):
+        if type(data) == str:
+            return int(time.mktime(pd.to_datetime(data).timetuple()))
+        elif isinstance(data, Iterable):
+            tmp_list = []
+            for val in list(data):
+                tmp_list.append(int(time.mktime(pd.to_datetime(val).timetuple())))
+            return tmp_list    
     
     @staticmethod
     def split(start, end, format="%Y-%m-%d", backward=False, **kargs):
