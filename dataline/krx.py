@@ -31,12 +31,12 @@ class KRX_CRAWL:
     def __clear_params(self):
         self.__params = {}
 
-    def __return_part(self, isShort=False):
+    def __return_part(self, isOutBlock=False):
         time.sleep(self.sleep_time)
         res = requests.get(url=self.__base_url, headers=self.__headers, params=self.__params)
         res.raise_for_status()
 
-        if isShort:
+        if isOutBlock:
             res = res.json()["OutBlock_1"]
         else:
             res = res.json()["output"]
@@ -135,6 +135,27 @@ class KRX_CRAWL:
 
         return self.__return_part()
     
+    def get_kr_price_daily(self, date, market="코스피"):
+        raise_arg("market", market, ["코스피","코스닥"])
+
+        self.__clear_headers()
+        self.__headers['Refer'] = "http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020104"
+
+        self.__clear_params()
+        self.__params["bld"] = "dbms/MDC/STAT/standard/MDCSTAT01501"
+        self.__params["locale"] = "ko_KR"
+        if market == "코스피":
+            self.__params["mktId"] = "STK"
+        else:
+            self.__params["mktId"] = "KSQ"
+        self.__params["segTpCd"] = "ALL"
+        self.__params["trdDd"] = date
+        self.__params["share"] = "1"
+        self.__params["money"] = "1"
+        self.__params["csvxls_isNo"] = "false"
+
+        return self.__return_part(isOutBlock=True)
+
     def get_kr_short_traded(self, date, market="코스피"):
         raise_arg("market", market, ["코스피","코스닥"])
 
@@ -165,7 +186,7 @@ class KRX_CRAWL:
         self.__params["money"] = "1"
         self.__params["csvxls_isNo"] = "false"
 
-        return self.__return_part(isShort=True)
+        return self.__return_part(isOutBlock=True)
     
     def get_kr_short_remain(self, date, market="코스피"):
         raise_arg("market", market, ["코스피","코스닥"])
@@ -193,7 +214,7 @@ class KRX_CRAWL:
         self.__params["money"] = "1"
         self.__params["csvxls_isNo"] = "false"
 
-        return self.__return_part(isShort=True)
+        return self.__return_part(isOutBlock=True)
     
     def get_kr_short_holder(self, date, market="코스피"):
         raise_arg("market", market, ["코스피","코스닥"])
@@ -219,7 +240,7 @@ class KRX_CRAWL:
         self.__params["endDd"] = date
         self.__params["csvxls_isNo"] = "false"
 
-        return self.__return_part(isShort=True)
+        return self.__return_part(isOutBlock=True)
 
 
 class KRX_API:
