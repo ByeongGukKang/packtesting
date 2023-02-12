@@ -24,14 +24,15 @@ class QDP:
         return df
 
     def get(self, table, symbols=None, columns=None, start=None, end=None, symbol_check=True):
-        """
+        """Get Method.
+
         Args:
-            table (str):
-            symbols (list):
-            columns (list):
-            start (DATE or DATETIME):
-            end (DATE or DATETIM):
-            symbol_check (bool):
+            table (str): name of DB table
+            symbols (list): list of symbols
+            columns (list): list of columns
+            start (DATE or DATETIME): %Y-%m-%d
+            end (DATE or DATETIM): %Y-%m-%d
+            symbol_check (bool): if True, checks whether the required symbols are in the table or not
         
         Returns:
             pd.DataFrame
@@ -39,6 +40,12 @@ class QDP:
 
         # Manual limit of frequent queries... TODO --> 서버단위의 Query Limit 생성?
         time.sleep(0.25)
+
+        # TypeChecking
+        if type(symbols) != type(None) and type(symbols) != list:
+            raise TypeError("symbols must be list")
+        if type(columns) != type(None) and type(columns) != list:
+            raise TypeError("columns must be list")
 
         # The code below returns Exception if the queried symbol doesn't exist in the TABLE
         if symbol_check:
